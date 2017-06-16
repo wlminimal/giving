@@ -7,13 +7,25 @@ https://docs.djangoproject.com/en/dev/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
-import environ
+from os.path import join, exists
+
+import environ, os
 
 ROOT_DIR = environ.Path(__file__) - 3  # (giving/config/settings/base.py - 3 = giving/)
 APPS_DIR = ROOT_DIR.path('giving')
 
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(PROJECT_DIR)
+
 # Load operating system environment variables and then prepare to use them
 env = environ.Env()
+
+
+# DEBUG
+# ------------------------------------------------------------------------------
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
+DEBUG = env.bool('DJANGO_DEBUG', False)
+
 
 # .env file, should load only in development environment
 READ_DOT_ENV_FILE = env.bool('DJANGO_READ_DOT_ENV_FILE', default=False)
@@ -26,6 +38,11 @@ if READ_DOT_ENV_FILE:
     print('Loading : {}'.format(env_file))
     env.read_env(env_file)
     print('The .env file has been loaded. See base.py for more information')
+
+
+env_file = join(BASE_DIR, '.env')
+if exists(env_file):
+    env.read_env(str(env_file))
 
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -50,7 +67,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
 
-    'stripe',  # Stripe
+    'pinax.stripe',
 ]
 
 # Apps specific for this project go here.
@@ -58,6 +75,7 @@ LOCAL_APPS = [
     # custom users app
     'giving.users.apps.UsersConfig',
     # Your stuff: custom apps go here
+    'giving.home',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -81,10 +99,6 @@ MIGRATION_MODULES = {
     'sites': 'giving.contrib.sites.migrations'
 }
 
-# DEBUG
-# ------------------------------------------------------------------------------
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = env.bool('DJANGO_DEBUG', False)
 
 # FIXTURE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -273,3 +287,10 @@ ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+
+# Pinax Stripe
+
+PINAX_STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
+PINAX_STRIPE_SECRET_KEY = env('STRIPE_PRIVATE_KEY')
+
+
