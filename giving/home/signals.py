@@ -6,7 +6,8 @@ from pinax.stripe.actions import customers
 
 @receiver(user_signed_up, sender=User)
 def create_stripe_customer(sender, **kwargs):
-    customers.create(user=kwargs['user'])
+    user = kwargs.get('user')
+    customers.create(user=user)
 
 
 @receiver(user_logged_in)
