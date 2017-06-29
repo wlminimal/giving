@@ -20,10 +20,12 @@
     <!-- Your stuff: Third-party CSS libraries go here -->
 
     <!-- This file stores project-specific CSS -->
+    <link rel="stylesheet" href="{% static 'css/payment.css' %}">
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
 
     {% endblock %}
 
+     <script src="https://js.stripe.com/v3/"></script>
   </head>
 
   <body>
@@ -97,10 +99,14 @@
 
       <!-- place project specific Javascript in this file -->
 
+
       <script src="{% static 'js/project.js' %}"></script>
 
 
     {% endblock javascript %}
-  </body>
-</html>
+    {% block payment %}
 
+    {% endblock %}
+
+      </body>
+</html>
